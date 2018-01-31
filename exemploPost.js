@@ -3,12 +3,17 @@ const board = new five.Board({
     port: "COM3"
 });
 
+const path = require("path");
+const fs = require("fs");
+
 const request = require("request");
 const config = require("./config");
-const id = config.idSensor;
+// var id = config.idSensor;
 const api = config.api;
-const endpointUpdateSensor = api + "/api/Sensor/" + id;
+// const endpointUpdateSensor = api + "/api/Sensor/" + id;
 const endPointCreateSensor = api + "/api/Sensor/";
+
+var criouSensor = false;
 
 board.on("ready", function() {
     const sensor = new five.Proximity({
@@ -20,22 +25,27 @@ board.on("ready", function() {
     sensor.on("data", function() {
         console.log('Esta é a distancia: ' + this.cm);
 
-        const cm = Math.floor(this.cm);
-        const dados = {
+        var cm = Math.floor(this.cm);
+        var dados = {
             valor: cm
         };
 
-        request.post(endPointCreateSensor, {
-            json: true,
-            body: dados
-        }, function(error, res, body){
-            if(error) {
-                console.error(error);
-                return;
-            }
-            // erro é nulo, tudo ok
-            console.log('Status Code:' + res && res.statusCode);
-            console.log(body);
-        });
+        if (criouSensor === false)
+        {
+            request.post(endPointCreateSensor, {
+                json: true,
+                body: dados
+            }, function(error, res, body){
+                if(error) {
+                    console.error(error);
+                    return;
+                }
+                // erro é nulo, tudo ok
+                console.log('Status Code:' + res && res.statusCode);
+                console.log(body);
+
+                criouSensor = true;
+            });
+        }
     });
 });
