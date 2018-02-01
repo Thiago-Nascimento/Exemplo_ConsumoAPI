@@ -13,8 +13,6 @@ const api = config.api;
 // const endpointUpdateSensor = api + "/api/Sensor/" + id;
 const endPointCreateSensor = api + "/api/Sensor/";
 
-var criouSensor = false;
-
 board.on("ready", function() {
     const sensor = new five.Proximity({
         pin: 10,
@@ -29,23 +27,19 @@ board.on("ready", function() {
         var dados = {
             valor: cm
         };
-
-        if (criouSensor === false)
-        {
-            request.post(endPointCreateSensor, {
-                json: true,
-                body: dados
-            }, function(error, res, body){
-                if(error) {
-                    console.error(error);
-                    return;
-                }
-                // erro é nulo, tudo ok
-                console.log('Status Code:' + res && res.statusCode);
-                console.log(body);
-
-                criouSensor = true;
+        
+        request.post(endPointCreateSensor, {
+            json: true,
+            body: dados
+        }, function(error, res, body){
+            if(error) {
+                console.error(error);
+                return;
+            }
+            // erro é nulo, tudo ok
+            console.log('Status Code:' + res && res.statusCode);
+            console.log(body);
             });
-        }
+        
     });
 });
